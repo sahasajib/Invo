@@ -12,10 +12,10 @@
     @include('layouts.messages')
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <form class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    
+
                 <form action="{{ route('invoice.create') }}" method="GET">
                         @csrf
 
@@ -73,32 +73,43 @@
                 </form>
                 @if($tasks)
                    <div class="mt-10">
-                   <table class="w-full border-collapse">
-                       <thead>
-                           <tr>
-                               <th class="border py-2">Name</th>
-                               <th class="border py-2">Status</th>
-                               <th class="border py-2">Client</th>
-                           </tr>
-                       </thead>
-                       <tbody>
-                            @foreach($tasks as $task)
+                       <form action="{{ route('invoice') }}" method="GET" id="tasksInvoiceFrom">@csrf
+                       <table class="w-full border-collapse">
+                           <thead>
                                <tr>
-                                   <td class="border py-2 text-center px-2">{{$task->name}}</td>
-                                   <td class="border py-2 text-center">{{$task->status}}</td>
-                                   <td class="border py-2 text-center">{{$task->client->name}}</td>
+                                   <th class="border py-2">Select</th>
+                                   <th class="border py-2">Name</th>
+                                   <th class="border py-2">Status</th>
+                                   <th class="border py-2">Client</th>
                                </tr>
-                            @endforeach
-                       </tbody>
-                   </table>
-                   </div>
-                   
-                   <div class="flex justify-center mt-8 space-x-3">
-                       <a href="{{route('preview.invoice')}}{{'?client_id=' .request('client_id'). '&status=' .request('status'). '&fromDate=' .request('fromDate'). '&endDate=' .request('endDate')}}" 
-                        class="bg-purple-400 text-white px-2 py-2" >Preview</a>
-                       <a href="{{route('invoice.generate')}}{{'?client_id=' .request('client_id'). '&status=' .request('status'). '&fromDate=' .request('fromDate'). '&endDate=' .request('endDate')}}" 
-                       class="bg-green-400 text-white px-2 py-2">Generate</a>
-                   </div>
+                           </thead>
+                           <tbody>
+                                @foreach($tasks as $task)
+                                   <tr>
+                                       <td class="border py-2 text-center px-2">
+                                           <input type="checkbox" name="invoice_ids[]" value="{{ $task->id }}" checked>
+                                       </td>
+                                       <td class="border py-2 text-center px-2">{{$task->name}}</td>
+                                       <td class="border py-2 text-center">{{$task->status}}</td>
+                                       <td class="border py-2 text-center">{{$task->client->name}}</td>
+                                   </tr>
+                                @endforeach
+                           </tbody>
+                       </table>
+
+                       <div class="flex justify-center mt-8 space-x-3">
+    {{--                       <a href="{{route('preview.invoice')}}{{'?client_id=' .request('client_id'). '&status=' .request('status'). '&fromDate=' .request('fromDate'). '&endDate=' .request('endDate')}}"--}}
+    {{--                        class="bg-purple-400 text-white px-2 py-2" >Preview</a>--}}
+    {{--                       <a href="{{route('invoice.generate')}}{{'?client_id=' .request('client_id'). '&status=' .request('status'). '&fromDate=' .request('fromDate'). '&endDate=' .request('endDate')}}"--}}
+    {{--                       class="bg-green-400 text-white px-2 py-2">Generate</a>--}}
+
+                           <button type="submit" name="preview" value="yes" form="tasksInvoiceFrom"
+                                   class="bg-teal-600 text-white px-3 py-2">Preview</button>
+
+                           <button type="submit" name="generate" value="yes" form="tasksInvoiceFrom"
+                                   class="bg-pink-600 text-white px-3 py-2">Generate</button>
+                       </div>
+                    </form>                </div>
                 @endif
                 </div>
             </div>

@@ -101,17 +101,33 @@
                             @foreach ($tasks as $task)
                             <tr>
                                 <td class="border py-2 text-left px-2">
-                                <a class="font-bold text-base hover:text-purple-700" href="{{route('task.show',$task->slug)}}">{{$task->name}}</a>  
+                                <a class="font-bold text-base hover:text-purple-700" href="{{route('task.show',$task->slug)}}">{{$task->name}}</a>
                                 </td>
                                 <td class="border py-2 text-center text-sm">{{$task->price}}</td>
                                 <td class="border py-2 text-left px-3">
-                                    <a class="text-lime-800 hover:text-purple-700" href="{{route('searchTaskByClient',
-                                        $task->client)}}">{{$task->client->name}}</a></td>
-                                <td class="border py-2 text-center capitalize">{{$task->status}}</td>
+                                    <a class="text-lime-800 hover:text-purple-700" href="{{route('task.index')}}?client_id=
+                                    {{$task->client->id}}">{{$task->client->name}}</a></td>
+                                <td class="border py-2 text-center capitalize">
+                                    {{$task->status}}
+
+                                    @if($task->status == 'pending')
+                                        <form action="{{route('markAsComplete',$task)}}" method="POST"
+                                              onsubmit="return confirm('Are you sure?');">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="bg-teal-600 w-full border-2 text-white hover:bg-transparent
+                                              hover:text-black transition-all duration-300 mr-2 px-3 py-1">Done</button>
+                                        </form>
+                                    @endif
+
+                                </td>
                                 <td class="border py-2 text-center">
                                     <div class="flex justify-center">
+
+
+
                                         <a href="{{route('task.edit',$task->id)}}" class="bg-emerald-600  px-3 py-1 mr-2">Edit</a>
-                                        
+
                                         <form action="{{route('task.destroy',$task->id)}}" method="post">
                                         @csrf
                                         @method('DELETE')

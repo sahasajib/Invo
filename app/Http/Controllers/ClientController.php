@@ -32,11 +32,6 @@ class ClientController extends Controller
             'countries'=> $this->countries_list]);
     }
 
-    public function searchTaskByClient(client $client){
-        return view('task.searchByClient')->with([
-           'client' => $client,
-        ]);
-    }
     /**
      * Store a newly created resource in storage.
      *
@@ -99,7 +94,14 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-        //
+        // Client with tasks and invoices
+      //  $client = $client->load('tasks', 'invoices');
+//        // Return View
+//        return view('client.profile')->with([
+//            'client' => $client,
+//            'pending_tasks' => $client->tasks->where('status', 'pending'),
+//            'paid_invoices' => $client->invoices->where('status', 'paid'),
+//        ]);
     }
 
     /**
