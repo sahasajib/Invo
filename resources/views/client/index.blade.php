@@ -24,11 +24,8 @@
                             <tr>
                                 <th class="border py-2 w-32  text-center">Image</th>
                                 <th class="border py-2">Name</th>
-                                <th class="border py-2">Username</th>
-                                <th class="border py-2">Email</th>
-                                <th class="border py-2">Phone</th>
                                 <th class="border py-2">Country</th>
-                                <th class="border py-2">Task Count</th>
+                                <th class="border py-2">Total Task</th>
                                 <th class="border py-2">Action</th>
                             </tr>
                         </thead>
@@ -46,15 +43,23 @@
                                 <td class="border py-2 w-32 text-center">
                                     <img src="{{getImageUrl($client->thumbnail)}}" width="50" class="mx-auto rounded" alt="">
                                 </td>
-                                <td class="border py-2 text-center">{{$client->name}}</td>
-                                <td class="border py-2 text-center">{{$client->username}}</td>
-                                <td class="border py-2 text-center">{{$client->email}}</td>
-                                <td class="border py-2 text-center">{{$client->phone}}</td>
+                                <td class="border py-2 text-left px-3">
+                                    <div class="flex flex-col ">
+                                        <a class="hover:text-purple-600 font-semibold" href="">{{
+                                            $client->name }}</a>
+                                        <span class="text-xs">{{ $client->username }}</span>
+                                        <span class="text-xs">{{ $client->email }}</span>
+                                    </div>
+                                </td>
                                 <td class="border py-2 text-center">{{$client->country}}</td>
                                 <td class="border py-2 text-center">
-                                    <div class="text-white bg-amber-400 w-8 h-8 leading-8 rounded-full
-                                    mx-auto">
-                                       <a href="{{route('searchTaskByClient',$client)}}"> {{count($client->tasks)}}</a>
+                                    <div class="">
+                                       <a href="{{route('task.index')}}?client_id={{$client->id}}" class="relative px-3 py-1
+                                        bg-teal-600 group inline-block uppercase text-white text-sm">
+                                        <span class="absolute group-hover:bg-orange-500 group-hover:text-white
+                                        group-hover:border-white transition-all from-neutral-300
+                                        bg-white text-black border border-black -right-4 -top-4 rounded-full w-7 h-7 leading-7
+                                        text-center text-xs">{{count($client->tasks)}}</span>View</a>
                                     </div>
                                 </td>
                                 <td class="border py-2 text-center">
