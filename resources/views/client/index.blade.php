@@ -39,7 +39,7 @@
                                     return asset('/uploads') .'/'. $image;
                                 }
                             @endphp
-                            @foreach ($clients as $client)
+                            @forelse ($clients as $client)
                             <tr>
                                 <td class="border py-2 w-32 text-center">
                                     <img src="{{getImageUrl($client->thumbnail)}}" width="50" class="mx-auto rounded" alt="">
@@ -77,7 +77,11 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td class="text-center border py-2" colspan="6"> No Client Found</td>
+                                </tr>
+                            @endforelse
 
                         </tbody>
                     </table>

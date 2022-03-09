@@ -94,14 +94,12 @@
                                 </td>
                                 <td class="border py-2 text-center capitalize w-24">
                                     {{$invoice->status}}
-                                    @if($invoice->status == 'unpaid')
                                         <form action="{{route('invoice.update',$invoice->id)}}" method="post"
-                                              onsubmit="return confirm('did you get paid?');">
+                                              onsubmit="return confirm('did you want continue?');">
                                             @csrf
                                             @method('put')
-                                            <button type="submit" class="bg-emerald-600 w-full  px-3 py-1 mr-2 ">Paid</button>
+                                            <button type="submit" class="bg-emerald-600 w-full  px-3 py-1 mr-2 ">{{$invoice->status == 'unpaid' ? 'paid' :'unpaid'}}</button>
                                         </form>
-                                    @endif
                                 </td>
                                 <td class="border py-2 text-center capitalize flex flex-col w-28">
                                     {{$invoice->email_sent}}

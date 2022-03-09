@@ -1,7 +1,7 @@
 @component('mail::message')
-# Welcome
+# Welcome {{$client->name}},
 
-Here is the latest invoice
+Here is the latest invoice.
 
 @component('mail::panel')
 The invoice is attaced.

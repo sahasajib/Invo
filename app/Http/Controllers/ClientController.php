@@ -41,6 +41,7 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         //dd($request->all());
+        //data validateion
         $request->validate([
             'name' => ['required','max:255','string'],
             'username' => ['required','max:255','string'],
@@ -61,6 +62,7 @@ class ClientController extends Controller
             //  Client::create($request->only('name','username','email','phone','country','status'));
 
             //db data insert process 2
+            //create new client
             Client::create([
                 'name' => $request->name,
                 'username' => $request->username,
@@ -84,8 +86,10 @@ class ClientController extends Controller
             // $client->thumbnail = $thumb;
             // $client->save();
 
+            //return response
             return redirect()->route('client.index')->with('success','Client Added Successfully');
         }catch (\Throwable $th){
+            //throw $th;
             return redirect()->route('client.index')->with('error',$th);
         }
 
@@ -109,6 +113,8 @@ class ClientController extends Controller
 //        ]);
         // Client with tasks and invoices
            $client = $client->load('tasks', 'invoices');
+
+           //return view
         return view('client.profile')->with([
             'client'=>$client,
             'pending_tasks' => $client->tasks->where('status', 'pending'),
@@ -139,6 +145,7 @@ class ClientController extends Controller
      */
     public function update(Request $request, Client $client)
     {
+        //data validation
         $request->validate([
             'name' => ['required','max:255','string'],
             'username' => ['required','max:255','string'],
@@ -149,12 +156,17 @@ class ClientController extends Controller
             'thumbnail' =>['image']
         ]);
         try {
+            //default thumbnail from database
             $thumb = $client->thumbnail;
+
+            //upload new thumbnail
             if(!empty($request->file('thumbnail'))){
                 Storage::delete('public/uploads/'.$thumb);
                 $thumb = time().'-'.$request->file('thumbnail')->getClientOriginalName();
                 $request->file('thumbnail')->storeAs('public/uploads/',$thumb);
             }
+
+            //update client data
             Client::find($client->id)->update([
                 'name' => $request->name,
                 'username' => $request->username,
@@ -165,8 +177,10 @@ class ClientController extends Controller
                 'user_id'=>Auth::user()->id,
                 'thumbnail' =>$thumb,
             ]);
+            //return response
             return redirect()->route('client.index')->with('success','Client Update Successfully');
         }catch (\Throwable $th){
+            //throw $th;
             return redirect()->route('client.index')->with('error',$th);
         }
 
@@ -180,20 +194,29 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
+        // find all pending tasks of the client
         $pending_tasks = $client->tasks->where('status','pending');
-        if (count($pending_tasks) == 0){
-            Storage::delete('public/uploads/' .$client->thumbnail);
-            $client-> delete();
-        }else{
-            $client->update([
-                'status' => 'inactive'
-            ]);
+        try {
+            //soft dalete or delete depending on the conditon
+            if (count($pending_tasks) == 0){
+                Storage::delete('public/uploads/' .$client->thumbnail);
+                $client-> delete();
+            }else{
+                $client->update([
+                    'status' => 'inactive'
+                ]);
+            }
+
+            //return response
+            return redirect()->route('client.index')->with('success','client Delete!');
+        }catch (\Throwable $th){
+            //throw $th;
+            return redirect()->route('client.index')->with('error',$th);
         }
 
-        return redirect()->route('client.index')->with('success','client Delete!');
     }
 
-
+//country  list
     public $countries_list = array(
     "Afghanistan",
     "Aland Islands",

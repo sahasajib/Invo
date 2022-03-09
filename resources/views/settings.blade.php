@@ -92,12 +92,19 @@
 
                                         <input type="file" class="flex-1" name="invoice_logo" id="logo">
                                     </div>
-                                    <div class="border p-2"><img src="{{asset('storage/uploads/invoice.png')}}"
+                                    <div class="border p-2">
+                                        @if(Auth::user()->invoice_logo !=null)
+                                        <img src="{{asset('storage/uploads/'.Auth::user()->invoice_logo)}}"
                                              class="w-20" alt=""></div>
+                                       @else
+                                        <img src="{{ asset('img/invo-mate.png') }}" class="w-20" alt="">
+                                       @endif
+                                    </div>
                                 </div>
                                 <div class="">
                                     <button type="submit"
-                                            class="w-full p-2 bg-teal-600 text-white font-bold hover:bg-orange-400 duration-300 transition-all">UPDATE</button>
+                                            class="w-full p-2 bg-teal-600 text-white font-bold hover:bg-orange-400 duration-300
+                                            transition-all">UPDATE</button>
                                 </div>
                             </div>
                         </div>

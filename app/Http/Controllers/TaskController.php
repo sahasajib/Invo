@@ -17,26 +17,39 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
+        //get tasks order by id
         $tasks = Task::where('user_id',Auth::user()->id)->with('client')->orderBy('id','DESC');
 
+        //filter client
         if(!empty($request->client_id)){
             $tasks = $tasks->where('client_id', $request->client_id);
         }
 
+        //filter status
         if(!empty($request->status)){
             $tasks = $tasks->where('status', $request->status);
         }
+
+        //filter price
         if(!empty($request->price)){
             $tasks = $tasks->where('price', '<=' ,$request->price);
         }
+
+        //filter fromData
         if(!empty($request->fromDate)){
             $tasks = $tasks->where('created_at', '>=' ,$request->fromDate);
         }
+
+        //filter endData
         if(!empty($request->endDate)){
             $tasks = $tasks->where('created_at', '<=' ,$request->endDate);
         }
+
+        //task with pagination
         $tasks = $tasks->paginate(10)->withQueryString();
         //SELECT * form clients
+
+        //return view
         return view('task.index')->with([
             'clients' => Client::where('user_id',Auth::user()->id)->get(),
             'tasks'=>$tasks,
@@ -63,16 +76,25 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-       $this->taskValidate($request);
-        Task::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'price' => $request->price,
-            'description' =>$request->description,
-            'client_id' =>$request->client_id,
-            'user_id' => Auth::user()->id,
-        ]);
-        return redirect()->route('task.index')->with('success','Task Created');
+        //validation
+        $this->taskValidate($request);
+        try {
+            //task store in database
+            Task::create([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'price' => $request->price,
+                'description' =>$request->description,
+                'client_id' =>$request->client_id,
+                'user_id' => Auth::user()->id,
+            ]);
+            //return response
+            return redirect()->route('task.index')->with('success','Task Created');
+        }catch (\Throwable $th){
+            //throw $th;
+            return redirect()->route('task.index')->with('error',$th);
+        }
+
     }
 
     /**
@@ -83,7 +105,9 @@ class TaskController extends Controller
      */
     public function show($slug)
     {
+        //task search by slug
         $task = Task::where('slug',$slug)->get()->first();
+        //return response
         return view('task.show')->with('task', $task);
     }
 
@@ -106,7 +130,6 @@ class TaskController extends Controller
             'name' => ['required','max:255','string'],
             'price'=>['required','integer'],
             'client_id'=>['required','max:255','not_in:none'],
-            'description'=>['required'],
         ]);
     }
 
@@ -119,16 +142,25 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
+        //validation
         $this->taskValidate($request);
-        $task->update([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'price' => $request->price,
-            'description' =>$request->description,
-            'user_id' => Auth::user()->id,
-            'client_id' =>$request->client_id,
-        ]);
-        return redirect()->route('task.index')->with('success','Task Updated');
+        try {
+           //update data
+            $task->update([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'price' => $request->price,
+                'description' =>$request->description,
+                'user_id' => Auth::user()->id,
+                'client_id' =>$request->client_id,
+            ]);
+            //return response
+            return redirect()->route('task.index')->with('success','Task Updated');
+        }catch (\Throwable $th){
+            //throw $th;
+            return redirect()->route('task.index')->with('error',$th);
+        }
+
     }
 
     /**
@@ -139,14 +171,26 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $task->delete();
-        return redirect()->route('task.index')->with('success','Task Deleted');
+        try {
+            $task->delete();
+            return redirect()->route('task.index')->with('success','Task Deleted');
+        }catch (\Throwable $th){
+            //throw $th;
+            return redirect()->route('task.index')->with('error',$th);
+        }
+
     }
     public function markAsComplete(Task $task)
     {
-        $task->update([
-          'status'=>'complete',
-        ]);
-        return redirect()->back()->with('success','Task Complete');
+        try {
+            $task->update([
+                'status'=>'complete',
+            ]);
+            return redirect()->back()->with('success','Task Complete');
+        }catch (\Throwable $th){
+            //throw $th;
+            return redirect()->back()->with('error',$th);
+        }
+
     }
 }

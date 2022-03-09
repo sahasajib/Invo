@@ -98,7 +98,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($tasks as $task)
+                            @forelse ($tasks as $task)
                             <tr>
                                 <td class="border py-2 text-left px-2">
                                 <a class="font-bold text-base hover:text-purple-700" href="{{route('task.show',$task->slug)}}">{{$task->name}}</a>
@@ -138,7 +138,11 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td class="text-center border py-2" colspan="5"> No Task Found</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                     <div class="mt-5">

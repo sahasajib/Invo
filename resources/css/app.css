@@ -9,3 +9,6 @@
 .formInput{
     @apply w-full rounded-sm
 }
+svg{
+    width: 100%;
+}
