@@ -26,6 +26,7 @@
                                 <th class="border py-2">Name</th>
                                 <th class="border py-2">Country</th>
                                 <th class="border py-2">Total Task</th>
+                                <th class="border py-2">Status</th>
                                 <th class="border py-2">Action</th>
                             </tr>
                         </thead>
@@ -45,7 +46,7 @@
                                 </td>
                                 <td class="border py-2 text-left px-3">
                                     <div class="flex flex-col ">
-                                        <a class="hover:text-purple-600 font-semibold" href="">{{
+                                        <a class="hover:text-purple-600 font-semibold" href="{{route('client.show',$client)}}">{{
                                             $client->name }}</a>
                                         <span class="text-xs">{{ $client->username }}</span>
                                         <span class="text-xs">{{ $client->email }}</span>
@@ -62,6 +63,7 @@
                                         text-center text-xs">{{count($client->tasks)}}</span>View</a>
                                     </div>
                                 </td>
+                                <td class="border py-2 text-center">{{$client->status}}</td>
                                 <td class="border py-2 text-center">
                                     <div class="flex justify-center">
                                         <a href="{{route('client.edit',$client->id)}}" class="bg-emerald-600  px-3 py-1 mr-2">Edit</a>

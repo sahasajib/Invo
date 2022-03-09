@@ -16,11 +16,12 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_id')->unique();
-            $table->foreignId('client_id');
+            $table->foreignId('client_id')->constrained('clients','id')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('user_id');
             $table->enum('status',['unpaid','paid'])->default('unpaid');
             $table->enum('email_sent',['yes','no'])->default('no');
             $table->string('download_url');
+            $table->string('amount');
             $table->timestamps();
         });
     }

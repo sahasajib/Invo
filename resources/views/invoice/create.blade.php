@@ -96,20 +96,33 @@
                                 @endforeach
                            </tbody>
                        </table>
+                         <div class="mt-6 flex justify-between">
+                             <div class="flex space-x-3">
+                                 <div class="">
+                                     <label for="discount" >Discount</label>
+                                     <input type="number" name="discount" id="discount" placeholder="Discount">
+                                 </div>
+                                 <div class="">
+                                     <label for="discount_type" >Type</label>
+                                     <select name="discount_type" id="discount_type">
+                                         <option value="%">%</option>
+                                         <option value="$">$</option>
+                                     </select>
+                                 </div>
+                             </div>
+                             <div class="space-x-3">
 
-                       <div class="flex justify-center mt-8 space-x-3">
-    {{--                       <a href="{{route('preview.invoice')}}{{'?client_id=' .request('client_id'). '&status=' .request('status'). '&fromDate=' .request('fromDate'). '&endDate=' .request('endDate')}}"--}}
-    {{--                        class="bg-purple-400 text-white px-2 py-2" >Preview</a>--}}
-    {{--                       <a href="{{route('invoice.generate')}}{{'?client_id=' .request('client_id'). '&status=' .request('status'). '&fromDate=' .request('fromDate'). '&endDate=' .request('endDate')}}"--}}
-    {{--                       class="bg-green-400 text-white px-2 py-2">Generate</a>--}}
+                                 <button type="submit" name="preview" value="yes" form="tasksInvoiceFrom"
+                                         class="bg-teal-600 text-white px-3 py-2">Preview</button>
 
-                           <button type="submit" name="preview" value="yes" form="tasksInvoiceFrom"
-                                   class="bg-teal-600 text-white px-3 py-2">Preview</button>
+                                 <button type="submit" name="generate" value="yes" form="tasksInvoiceFrom"
+                                         class="bg-pink-600 text-white px-3 py-2">Generate</button>
+                             </div>
+                         </div>
 
-                           <button type="submit" name="generate" value="yes" form="tasksInvoiceFrom"
-                                   class="bg-pink-600 text-white px-3 py-2">Generate</button>
-                       </div>
-                    </form>                </div>
+
+                    </form>
+                   </div>
                 @endif
                 </div>
             </div>

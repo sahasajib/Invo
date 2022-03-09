@@ -43,47 +43,52 @@ class ClientController extends Controller
         //dd($request->all());
         $request->validate([
             'name' => ['required','max:255','string'],
-            'username' => ['required','max:255','string','unique:clients'],
-            'email'=> ['required','max:255','string','email','unique:clients'],
+            'username' => ['required','max:255','string'],
+            'email'=> ['required','max:255','string','email'],
             'phone' => ['string','max:255'],
             'country'=>['not_in:none','string'],
             'status'=>['not_in:none','string'],
             'thumbnail' =>['image']
         ]);
-          $thumb = null;
-          if(!empty($request->file('thumbnail'))){
-              $thumb = time().'-'.$request->file('thumbnail')->getClientOriginalName();
-              $request->file('thumbnail')->storeAs('public/uploads/',$thumb);
-          }
+        try {
+            $thumb = null;
+            if(!empty($request->file('thumbnail'))){
+                $thumb = time().'-'.$request->file('thumbnail')->getClientOriginalName();
+                $request->file('thumbnail')->storeAs('public/uploads/',$thumb);
+            }
 
-        //db data insert process 3
-       //  Client::create($request->only('name','username','email','phone','country','status'));
+            //db data insert process 3
+            //  Client::create($request->only('name','username','email','phone','country','status'));
 
-        //db data insert process 2
-        Client::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'country' => $request->country,
-            'status' => $request->status,
-            'user_id'=>Auth::user()->id,
-            'thumbnail' => $thumb,
-        ]);
+            //db data insert process 2
+            Client::create([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'country' => $request->country,
+                'status' => $request->status,
+                'user_id'=>Auth::user()->id,
+                'thumbnail' => $thumb,
+            ]);
 
 
-          //db data insert process 1
-        // $client = new Client();
-        // $client->name = $request->name;
-        // $client->username = $request->username;
-        // $client->email = $request->email;
-        // $client->phone = $request->phone;
-        // $client->country = $request->country;
-        // $client->status = $request->status;
-        // $client->thumbnail = $thumb;
-        // $client->save();
+            //db data insert process 1
+            // $client = new Client();
+            // $client->name = $request->name;
+            // $client->username = $request->username;
+            // $client->email = $request->email;
+            // $client->phone = $request->phone;
+            // $client->country = $request->country;
+            // $client->status = $request->status;
+            // $client->thumbnail = $thumb;
+            // $client->save();
 
-        return redirect()->route('client.index')->with('success','Client Added Successfully');
+            return redirect()->route('client.index')->with('success','Client Added Successfully');
+        }catch (\Throwable $th){
+            return redirect()->route('client.index')->with('error',$th);
+        }
+
     }
 
     /**
@@ -102,6 +107,13 @@ class ClientController extends Controller
 //            'pending_tasks' => $client->tasks->where('status', 'pending'),
 //            'paid_invoices' => $client->invoices->where('status', 'paid'),
 //        ]);
+        // Client with tasks and invoices
+           $client = $client->load('tasks', 'invoices');
+        return view('client.profile')->with([
+            'client'=>$client,
+            'pending_tasks' => $client->tasks->where('status', 'pending'),
+            'paid_invoices' => $client->invoices->where('status', 'paid'),
+        ]);
     }
 
     /**
@@ -136,23 +148,28 @@ class ClientController extends Controller
             'status'=>['not_in:none','string'],
             'thumbnail' =>['image']
         ]);
-          $thumb = $client->thumbnail;
-          if(!empty($request->file('thumbnail'))){
-              Storage::delete('public/uploads/'.$thumb);
-              $thumb = time().'-'.$request->file('thumbnail')->getClientOriginalName();
-              $request->file('thumbnail')->storeAs('public/uploads/',$thumb);
-          }
-          Client::find($client->id)->update([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email'=> $request->email,
-            'phone' => $request->phone,
-            'country'=>$request->country,
-            'status'=>$request->status,
-            'user_id'=>Auth::user()->id,
-            'thumbnail' =>$thumb,
-          ]);
-          return redirect()->route('client.index')->with('success','Client Update Successfully');
+        try {
+            $thumb = $client->thumbnail;
+            if(!empty($request->file('thumbnail'))){
+                Storage::delete('public/uploads/'.$thumb);
+                $thumb = time().'-'.$request->file('thumbnail')->getClientOriginalName();
+                $request->file('thumbnail')->storeAs('public/uploads/',$thumb);
+            }
+            Client::find($client->id)->update([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email'=> $request->email,
+                'phone' => $request->phone,
+                'country'=>$request->country,
+                'status'=>$request->status,
+                'user_id'=>Auth::user()->id,
+                'thumbnail' =>$thumb,
+            ]);
+            return redirect()->route('client.index')->with('success','Client Update Successfully');
+        }catch (\Throwable $th){
+            return redirect()->route('client.index')->with('error',$th);
+        }
+
     }
 
     /**
@@ -163,8 +180,16 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        Storage::delete('public/uploads/' .$client->thumbnail);
-        $client->delete();
+        $pending_tasks = $client->tasks->where('status','pending');
+        if (count($pending_tasks) == 0){
+            Storage::delete('public/uploads/' .$client->thumbnail);
+            $client-> delete();
+        }else{
+            $client->update([
+                'status' => 'inactive'
+            ]);
+        }
+
         return redirect()->route('client.index')->with('success','client Delete!');
     }
 

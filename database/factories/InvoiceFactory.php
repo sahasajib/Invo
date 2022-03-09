@@ -19,6 +19,7 @@ class InvoiceFactory extends Factory
             'invoice_id' => 'INVO_' .rand(255,255555),
             'client_id' => Client::all()->random()->id,
             'user_id'   => User::all()->random()->id,
+            'amount'    => rand(100,10000),
             'download_url'=> 'https://picsum.photos/300?random='.rand(255,35235),
         ];
     }
